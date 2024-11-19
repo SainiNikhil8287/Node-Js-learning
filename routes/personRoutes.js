@@ -58,4 +58,52 @@ router.get('/:search', async(req, res) => {
 
 ////////////////////////////////////////////////////////
 
+router.put('/:id', async(req, res)=>{
+        try{
+
+            const personId = req.params.id;
+            const updatedPersonData = req.body;
+
+            const response = await Person.findByIdAndUpdate(personId, updatedPersonData, {
+                new : true,  // return the updated data
+                runValidators : true // Run Mongoose Validations
+            });
+
+            if(!response){
+                return res.status(404).json({error: 'No data found'});
+            }
+
+            res.status(200).json(response);
+            console.log('data updated');
+
+        }catch(err){
+
+            console.log(err);
+            res.status(500).json({error : 'Internal Server Error'});
+
+        }
+});
+
+////////////////////////////////////////////////////////
+
+router.delete('/:id',(req, res)=>{
+    try{
+            const personId = req.params.id;
+            const response = Person.findByIdAndRemove(personId);
+
+            if(!response){
+                return res.status(404).json({error:"No data deleted"});
+            }
+
+            console.log('data deleted');
+            return res.status(200).json(response);
+    }
+    catch(err){
+            console.log(err);
+            return res.status(500).json({error:"Internal Server Error"});
+    }
+});
+
+////////////////////////////////////////////////////////
+
 module.exports = router;
