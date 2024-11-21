@@ -1,0 +1,15 @@
+[
+    {
+        "name": "nikhil",
+        "age": 27,
+        "work": "manager",
+        "mobile": "8442573828",
+        "email": "nikhil@gmail.com",
+        "address": "123 add test-city",
+        "salary": 60000,
+        "username": "nikh123",
+        "password": "Nik.123",
+        "_id": "673edea9dc52b463727caa8b",
+        "__v": 0
+    }
+]
