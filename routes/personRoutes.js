@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Person = require('./../models/Person');
+const {jwtAuthMiddelware, generateToken} = require('./../jwt');
 
 ////////////////////////////////////////////////////////
 
@@ -28,7 +29,11 @@ router.post('/add', async (req, res) => {
         const response = await newPerson.save();
 
         console.log('data saved');
-        res.status(200).json(response);
+
+        const token = generateToken(response.username);
+        console.log('Token is : ', token);
+
+        res.status(200).json({response : response, token: token});
 
     }catch(err){
 
@@ -86,21 +91,23 @@ router.put('/:id', async(req, res)=>{
 
 ////////////////////////////////////////////////////////
 
-router.delete('/:id',(req, res)=>{
-    try{
-            const personId = req.params.id;
-            const response = Person.findByIdAndRemove(personId);
+router.delete('/:id', async (req, res) => {
+    try {
+        const personId = req.params.id;
 
-            if(!response){
-                return res.status(404).json({error:"No data deleted"});
-            }
+        // Wait for the deletion operation to complete
+        const response = await Person.findByIdAndDelete(personId);
 
-            console.log('data deleted');
-            return res.status(200).json(response);
-    }
-    catch(err){
-            console.log(err);
-            return res.status(500).json({error:"Internal Server Error"});
+        // If the document wasn't found, response will be null
+        if (!response) {
+            return res.status(404).json({ error: "No data found to delete" });
+        }
+
+        console.log('Data deleted:', response);
+        return res.status(200).json(response);
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: "Internal Server Error" });
     }
 });
 
