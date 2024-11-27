@@ -26,7 +26,7 @@ const jwtAuthMiddelware = (req, res, next)=>{
 
 const generateToken = (userData) => {
     // generate new JWT token using user data
-    return jwt.sign(userData, process.env.JWT_SECRET);
+    return jwt.sign(userData, process.env.JWT_SECRET, {expiresIn: 30}); // 30 is seconds
 }
 
 

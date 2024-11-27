@@ -3,6 +3,36 @@ const router = express.Router();
 const Person = require('./../models/Person');
 const {jwtAuthMiddelware, generateToken} = require('./../jwt');
 
+//////////////////////////////////////////////////////
+
+router.post('/login', async(req, res) => {
+
+    try{
+        // extract username and password form request body
+        const {username, password} = req.body;
+
+        const user = await Person.findOne({username: username});
+
+        if(!user || !(await user.comparePassword(password)))
+        {
+            return res.status(401).json({error:'Invalid Username or Password'});
+        }
+
+        const payload = {
+            id : user.id,
+            username : user.username,
+        }
+
+        const token = generateToken(payload);
+        res.json({token});
+    }
+    catch(err){
+        console.log(err);
+        res.status(500).json({error:'Internal Server Error'});
+    }
+
+});
+
 ////////////////////////////////////////////////////////
 
 router.get('/', async (req, res) =>{
